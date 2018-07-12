@@ -4,6 +4,7 @@ All rights reserved, 2017.
 """
 from collections import defaultdict, namedtuple
 
+import sys
 import torch
 from skcuda import cublas, cufft
 from pynvrtc.compiler import Program
@@ -12,6 +13,7 @@ from cupy.cuda.function import Module
 from cupy.cuda import device
 from string import Template
 
+python2 = sys.version_info.major == 2
 
 Stream = namedtuple('Stream', ['ptr'])
 
@@ -92,7 +94,10 @@ class Periodize(object):
             kernel = Template(kernel).substitute(B=B, H=H, W=W, k=k, Dtype=getDtype(input))
             name = str(input.get_device())+'-'+str(B)+'-'+str(k)+'-'+str(H)+'-'+str(W)+'-periodize.cu'
             print(name)
-            prog = Program(kernel, name.encode())
+            if python2:
+                prog = Program(kernel, name.encode())
+            else:
+                prog = Program(kernel, name)
             ptx = prog.compile(['-arch='+get_compute_arch(input)])
             module = Module()
             module.load(bytes(ptx.encode()))
@@ -141,7 +146,10 @@ class Modulus(object):
             }
             """
             print('modulus.cu')
-            prog = Program(kernel, b'modulus.cu')
+            if python2:
+                prog = Program(kernel, b'modulus.cu')
+            else:
+                prog = Program(kernel, 'modulus.cu')
             ptx = prog.compile(['-arch='+get_compute_arch(input)])
             module = Module()
             module.load(bytes(ptx.encode()))
