@@ -55,7 +55,7 @@ class Periodize(object):
             return out
 
         if not iscomplex(input):
-            raise (TypeError('The input and outputs should be complex'))
+            raise TypeError('The input and outputs should be complex')
 
         input = input.contiguous()
 
@@ -189,8 +189,8 @@ class Fft(object):
 
         if not isinstance(input, torch.cuda.FloatTensor):
             if not isinstance(input, (torch.FloatTensor, torch.DoubleTensor)):
-                raise(TypeError('The input should be a torch.cuda.FloatTensor, \
-                                torch.FloatTensor or a torch.DoubleTensor'))
+                raise TypeError('The input should be a torch.cuda.FloatTensor'
+                                'torch.FloatTensor or a torch.DoubleTensor')
             else:
                 input_np = input[..., 0].numpy() + 1.0j * input[..., 1].numpy()
                 f = lambda x: np.stack((np.real(x), np.imag(x)), axis=len(x.shape))
@@ -215,10 +215,10 @@ class Fft(object):
                     return torch.from_numpy(out)
 
         if not iscomplex(input):
-            raise(TypeError('The input should be complex (e.g. last dimension is 2)'))
+            raise TypeError('The input should be complex (e.g. last dimension is 2')
 
-        if (not input.is_contiguous()):
-            raise (RuntimeError('Tensors must be contiguous!'))
+        if not input.is_contiguous():
+            raise RuntimeError('Tensors must be contiguous!')
 
         if direction == 'C2R':
             output = input.new(input.size()[:-1])

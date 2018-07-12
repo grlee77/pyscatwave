@@ -44,7 +44,7 @@ class Scattering(object):
 
     def _type(self, _type):
         for key, item in enumerate(self.Psi):
-            for key2, item2 in self.Psi[key].iteritems():
+            for key2, item2 in self.Psi[key].items():
                 if torch.is_tensor(item2):
                     self.Psi[key][key2] = item2.type(_type)
         self.Phi = [v.type(_type) for v in self.Phi]
@@ -87,19 +87,19 @@ class Scattering(object):
 
     def forward(self, input):
         if not torch.is_tensor(input):
-            raise(TypeError('The input should be a torch.cuda.FloatTensor, a torch.FloatTensor or a torch.DoubleTensor'))
+            raise TypeError('The input should be a torch.cuda.FloatTensor, a torch.FloatTensor or a torch.DoubleTensor')
 
         if (not input.is_contiguous()):
-            raise (RuntimeError('Tensor must be contiguous!'))
+            raise RuntimeError('Tensor must be contiguous!')
 
         if((input.size(-1)!=self.N or input.size(-2)!=self.M) and not self.pre_pad):
-            raise (RuntimeError('Tensor must be of spatial size (%i,%i)!'%(self.M,self.N)))
+            raise RuntimeError('Tensor must be of spatial size (%i,%i)!'%(self.M,self.N))
 
         if ((input.size(-1) != self.N_padded or input.size(-2) != self.M_padded) and self.pre_pad):
-            raise (RuntimeError('Padded tensor must be of spatial size (%i,%i)!' % (self.M_padded, self.N_padded)))
+            raise RuntimeError('Padded tensor must be of spatial size (%i,%i)!' % (self.M_padded, self.N_padded))
 
         if (input.dim() != 4):
-            raise (RuntimeError('Input tensor must be 4D'))
+            raise RuntimeError('Input tensor must be 4D')
 
         J = self.J
         phi = self.Phi
